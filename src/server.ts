@@ -63,6 +63,7 @@ export function createServer() {
   return Bun.serve({
     port: config.port,
     hostname: config.host,
+    idleTimeout: 0, // disable idle timeout - questions can wait up to config.timeoutMs
     tls: config.tlsEnabled
       ? {
           key: Bun.file(config.tlsKeyPath),

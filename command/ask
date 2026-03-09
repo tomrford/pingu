@@ -14,8 +14,9 @@ response=$(curl -s -w "\n%{http_code}" \
   -X POST \
   -H "Content-Type: application/json" \
   -d "$(jq -n --arg text "$TEXT" --arg cwd "$CWD" '{text: $text, cwd: $cwd}')" \
-  "${PINGU_URL}/ask" 2>/dev/null) || {
+  "${PINGU_URL}/ask" 2>&1) || {
   echo "Failed to reach Pingu server at ${PINGU_URL}" >&2
+  echo "curl output: $response" >&2
   exit 1
 }
 

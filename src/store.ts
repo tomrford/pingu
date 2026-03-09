@@ -53,10 +53,23 @@ export class QuestionStore {
 
     // Notify via ntfy (fire and forget)
     const dirName = data.cwd.split("/").pop() || data.cwd;
-    fetch(config.ntfyUrl, {
-      method: "POST",
-      body: `[${dirName}] ${data.text}`,
-    }).catch(() => {}); // ignore errors
+    const ntfyUrl = config.ntfyUrl;
+    if (ntfyUrl) {
+      fetch(ntfyUrl, {
+        method: "POST",
+        body: `[${dirName}] ${data.text}`,
+      })
+        .then((res) => {
+          if (!res.ok) {
+            console.error(`[ntfy] failed: ${res.status} ${res.statusText}`);
+          }
+        })
+        .catch((err) => {
+          console.error(`[ntfy] error:`, err.message);
+        });
+    } else {
+      console.warn("[ntfy] NTFY_URL not set, skipping notification");
+    }
 
     return { id, promise };
   }
